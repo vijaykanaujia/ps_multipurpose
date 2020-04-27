@@ -1,0 +1,1 @@
+<div class="alert alert-success">Hurray Diwali Dhamak Offer Start Soon !</div>

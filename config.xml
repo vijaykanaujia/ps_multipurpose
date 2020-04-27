@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+	<name>ps_multipurpose</name>
+	<displayName><![CDATA[Prestashop Multipurpose]]></displayName>
+	<version><![CDATA[2.0.1]]></version>
+	<description><![CDATA[Learn how to develope prestashop module.]]></description>
+	<author><![CDATA[Vijay Kanaujia]]></author>
+	<is_configurable>1</is_configurable>
+	<need_instance>0</need_instance>
+	<limited_countries>India</limited_countries>
+</module>
