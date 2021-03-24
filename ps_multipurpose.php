@@ -57,6 +57,7 @@ class Ps_Multipurpose extends Module{
 
 	public function install()
 	{
+		include_once($this->local_path . 'sql/install.php');
 	    if (!parent::install() &&
 	        !$this->registerHook('header') &&
 	        !$this->registerHook('displayHome') &&
@@ -70,6 +71,7 @@ class Ps_Multipurpose extends Module{
 
 	public function uninstall()
 	{
+		include_once($this->local_path . 'sql/uninstall.php');
 	    if (!parent::uninstall() &&
 	        !$this->unregisterHook('header') &&
 	        !$this->unregisterHook('displayHome') &&
@@ -128,7 +130,7 @@ class Ps_Multipurpose extends Module{
         foreach (Language::getLanguages() as $lang) {
             $tab->name[$lang['id_lang']] = 'Demo';
         }
-        $tab->id_parent = 0;
+        $tab->id_parent = 1;
         $tab->module = $this->name;
 
         return $tab->save();
