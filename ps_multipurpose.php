@@ -146,4 +146,11 @@ class Ps_Multipurpose extends Module{
 
         return $tab->delete();
 	}
+
+	public function generateAdminToken($controller = 'AdminOrders'){
+		$cookie = new Cookie('psAdmin');
+		$id_employee = $cookie->__get('id_employee');
+		$id_class = Tab::getIdFromClassName($controller);
+		return Tools::getAdminToken($controller.$id_class.$id_employee);
+	}
 }
