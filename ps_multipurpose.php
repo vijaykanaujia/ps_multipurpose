@@ -29,6 +29,23 @@ if (!defined('_PS_VERSION_')) {
 
 class Ps_Multipurpose extends Module{
 
+	//tabs to be created in the backoffice menu
+    protected $tabs = [
+        [
+            'name'      => 'CRUD Completo',
+            'className' => 'AdminDemo',
+            'active'    => 1,
+            //submenus
+            'childs'    => [
+                [
+                    'active'    => 1,
+                    'name'      => 'CRUD Prestashop',
+                    'className' => 'AdminCrud',
+                ]
+            ],
+        ],
+    ];
+
 	public function __construct()
 	{
 	    $this->name = 'ps_multipurpose';
@@ -61,7 +78,7 @@ class Ps_Multipurpose extends Module{
 	    if (!parent::install() &&
 	        !$this->registerHook('header') &&
 	        !$this->registerHook('displayHome') &&
-	        !$this->installTabLink() &&
+	        !$this->addTab($this->tabs, 2) &&
 	        !Configuration::updateValue('PS_MULTIPURPOSE', 'product carousel')
 	    ) {
 	        return false;
@@ -75,7 +92,7 @@ class Ps_Multipurpose extends Module{
 	    if (!parent::uninstall() &&
 	        !$this->unregisterHook('header') &&
 	        !$this->unregisterHook('displayHome') &&
-	        !$this->uninstallTabLink() &&
+	        !$this->removeTab($this->tabs) &&
 	        !Configuration::deleteByName('PS_MULTIPURPOSE')
 	    ) {
 	        return false;
@@ -109,7 +126,7 @@ class Ps_Multipurpose extends Module{
 		return $this->display($this->local_path,'/views/templates/admin/index.tpl');
 	}	
 
-	private function installTabLink(){
+	//private function installTabLink(){
 		// $tab = new Tab;
 		// foreach(Language::getLanguages() as $lang){
 		// 	$tab->name[$lang['id_lang']] = $this->l('Demo');
@@ -120,32 +137,80 @@ class Ps_Multipurpose extends Module{
 		// $tab->add();
 		// return true;
 
-		$tabId = (int) Tab::getIdFromClassName('AdminDemo');
-        if (!$tabId) {
-            $tabId = null;
-        }
+		// $tabId = (int) Tab::getIdFromClassName('AdminDemo');
+        // if (!$tabId) {
+        //     $tabId = null;
+        // }
 
-        $tab = new Tab($tabId);
-        $tab->class_name = 'AdminDemo';
-        foreach (Language::getLanguages() as $lang) {
-            $tab->name[$lang['id_lang']] = 'Demo';
-        }
-        $tab->id_parent = 1;
-        $tab->module = $this->name;
+        // $tab = new Tab($tabId);
+        // $tab->class_name = 'AdminDemo';
+        // foreach (Language::getLanguages() as $lang) {
+        //     $tab->name[$lang['id_lang']] = 'Demo';
+        // }
+        // $tab->id_parent = 2;
+        // $tab->module = $this->name;
 
-        return $tab->save();
+        // return $tab->save();
+		
+	//}
+
+	public function addTab($tabs, $id_parent){
+		foreach ($tabs as $tab)
+        {
+            $tabModel             = new Tab();
+            $tabModel->module     = $this->name;
+            $tabModel->active     = $tab['active'];
+            $tabModel->class_name = $tab['className'];
+            $tabModel->id_parent  = $id_parent;
+
+            //tab text in each language
+            foreach (Language::getLanguages(true) as $lang)
+            {
+                $tabModel->name[$lang['id_lang']] = $tab['name'];
+            }
+
+            $tabModel->save();
+
+            //submenus of the tab
+            if (isset($tab['childs']) && is_array($tab['childs']))
+            {
+                $this->addTab($tab['childs'], Tab::getIdFromClassName($tab['className']));
+            }
+        }
+        return true;
 	}
 
-	private function uninstallTabLink(){
-		$tabId = (int) Tab::getIdFromClassName('AdminDemo');
-        if (!$tabId) {
-            return true;
+	//remove a tab and its childrens from the backoffice menu
+    public function removeTab($tabs)
+    {
+        foreach ($tabs as $tab)
+        {
+            $id_tab = (int) Tab::getIdFromClassName($tab["className"]);
+            if ($id_tab)
+            {
+                $tabModel = new Tab($id_tab);
+                $tabModel->delete();
+            }
+
+            if (isset($tab["childs"]) && is_array($tab["childs"]))
+            {
+                $this->removeTab($tab["childs"]);
+            }
         }
 
-        $tab = new Tab($tabId);
+        return true;
+    }
 
-        return $tab->delete();
-	}
+	// private function uninstallTabLink(){
+	// 	$tabId = (int) Tab::getIdFromClassName('AdminDemo');
+    //     if (!$tabId) {
+    //         return true;
+    //     }
+
+    //     $tab = new Tab($tabId);
+
+    //     return $tab->delete();
+	// }
 
 	public function generateAdminToken($controller = 'AdminOrders'){
 		$cookie = new Cookie('psAdmin');
