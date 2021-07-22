@@ -4,7 +4,7 @@
     <displayName><![CDATA[Prestashop Multipurpose]]></displayName>
     <version><![CDATA[1.0.0]]></version>
     <description><![CDATA[Learn how to develope prestashop module.]]></description>
-    <author><![CDATA[Vijay Kanaujia]]></author>
+    <author><![CDATA[sanjay singh]]></author>
     <tab><![CDATA[Administrator]]></tab>
 	<confirmUninstall><![CDATA[Are you sure you want to uninstall?]]></confirmUninstall>
     <is_configurable>1</is_configurable>

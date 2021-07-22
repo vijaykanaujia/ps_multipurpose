@@ -28,6 +28,8 @@ if (!defined('_PS_VERSION_')) {
 	exit;
 }
 
+require_once _PS_MODULE_DIR_ . 'ps_multipurpose/autoload.php';
+
 class Ps_Multipurpose extends Module
 {
 
@@ -36,11 +38,11 @@ class Ps_Multipurpose extends Module
 		[
 			'name'      => 'CRUD Completo',
 			'className' => 'AdminDemo',
-			'active'    => 1,
+			'active'    => true,
 			//submenus
 			'childs'    => [
 				[
-					'active'    => 1,
+					'active'    => true,
 					'name'      => 'CRUD Prestashop',
 					'className' => 'AdminCrud',
 				]
@@ -52,7 +54,7 @@ class Ps_Multipurpose extends Module
 	{
 		$this->name = 'ps_multipurpose';
 		$this->version = '1.0.0';
-		$this->author = 'Vijay Kanaujia';
+		$this->author = 'sanjay singh';
 		$this->need_instance = 0;
 		$this->ps_versions_compliancy = [
 			'min' => '1.7.0',
@@ -82,6 +84,7 @@ class Ps_Multipurpose extends Module
 			!$this->registerHook('header') &&
 			!$this->registerHook('displayHome') &&
 			!$this->addTab($this->tabs, 2) &&
+			!$this->installFolder() &&
 			!Configuration::updateValue('PS_MULTIPURPOSE', 'product carousel')
 		) {
 			return false;
@@ -133,7 +136,8 @@ class Ps_Multipurpose extends Module
 
 	public function hookDisplayHome()
 	{
-		return $this->display($this->local_path, 'views/templates/front/hook_display_home_message.tpl');
+		//return $this->display($this->local_path, 'views/templates/front/hook_display_home_message.tpl');
+		return "Home";
 	}
 
 	public function getContent()
@@ -152,10 +156,12 @@ class Ps_Multipurpose extends Module
 	{
 		foreach ($tabs as $tab) {
 			$tabModel             = new Tab();
-			$tabModel->module     = $this->name;
+			$tabModel->module    = 'ps_multipurpose';
+			$tabModel->name     = $this->name;
 			$tabModel->active     = $tab['active'];
 			$tabModel->class_name = $tab['className'];
 			$tabModel->id_parent  = $id_parent;
+			$tabModel->enabled    = true;
 
 			//tab text in each language
 			foreach (Language::getLanguages(true) as $lang) {
@@ -196,5 +202,12 @@ class Ps_Multipurpose extends Module
 		$id_employee = $cookie->__get('id_employee');
 		$id_class = Tab::getIdFromClassName($controller);
 		return Tools::getAdminToken($controller . $id_class . $id_employee);
+	}
+
+	public function installFolder(){
+		if(!file_exists(ModelCrud::$img_dir))
+			mkdir(ModelCrud::$img_dir, '0777');
+
+		return true;
 	}
 }
